@@ -2,7 +2,7 @@
 cooking, food, recipe
 
 ## Slogan
-Take it, and fire you girl friend.
+Take it, and fire your girl-friend.
 
 ## How
 We apply the module `fire`, so it is ez to use it.
