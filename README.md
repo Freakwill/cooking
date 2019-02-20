@@ -1,6 +1,7 @@
 # cooking
 cooking, food, recipe
 
+Take it, and fire you girl friend.
 
 We apply the module `fire`, so it is ez to use it.
 
