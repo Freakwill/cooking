@@ -25,11 +25,26 @@ def prettyList(l):
 def index2url(index):
     return 'https://www.meishij.net/zuofa/%s.html' % index
 
+TEMPLATE = """{title}:
+==========
+信息: 
+{info}
+----------
+*{remark}*
+主料: 
+{zl}
+辅料: 
+{fl}
+----------
+步骤:
+{steps}
+----------
+"""
 
 class Recipe(object):
     '''Recipe Class
     '''
-    def __init__(self, title='', steps=[], materials={}, info={}):
+    def __init__(self, title='', steps=[], materials={}, info={}, remark=''):
         """
         Keyword Arguments:
             title {str} -- 菜名 (default: {''})
@@ -41,6 +56,7 @@ class Recipe(object):
         self.info = info
         self.steps = steps
         self.materials = materials
+        self.remark = remark
 
     def __getstate__(self):
         return self.title, self.steps, self.materials, self.info
@@ -49,19 +65,7 @@ class Recipe(object):
         self.title, self.steps, self.materials, self.info = state
 
     def __str__(self):
-        return """{title}:
-==========
-信息: 
-{info}
-----------
-主料: 
-{zl}
-辅料: 
-{fl}
-----------
-步骤:
-{steps}
-""".format(title=self.title, info=self.info, zl=prettyDict(self.materials['主料']), fl=prettyDict(self.materials['辅料']), steps=prettyList(self.steps))
+        return TEMPLATE.format(title=self.title, info=self.info, zl=prettyDict(self.materials['主料']), fl=prettyDict(self.materials['辅料']), steps=prettyList(self.steps), remark=self.remark)
 
     @staticmethod
     def fromIndex(index):
@@ -93,11 +97,11 @@ class Recipe(object):
         info = {li.strong.text:li.a.text for li in main.find('div', {'class': 'info2'}).find_all('li')}
         
         materials = main.find('div', {'class': 'materials'})
+        remark = materials.p.text
         materials = {m: {li.h4.a.text:li.span.text for li in div.find_all('li')} for m, div in zip(('主料', '辅料'), materials.find_all('div'))}
-
         method = main.find('div', {'class': 'editnew edit'})
         steps = [step.text.partition('.')[-1].strip() for step in method.find_all('div', {'class': 'content clearfix'})]
-        return Recipe(title, steps, materials, info)
+        return Recipe(title, steps, materials, info, remark)
 
     @staticmethod
     def search(keyword, **kwargs):
